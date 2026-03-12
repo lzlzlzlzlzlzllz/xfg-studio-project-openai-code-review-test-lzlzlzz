@@ -2,6 +2,10 @@ package plus.gaga.middleware.sdk.infrastructure.openai.dto;
 
 import java.util.List;
 
+/**
+ * 大模型同步返回结果 DTO。
+ * 当前项目只关心第一条 choice 里的 message.content。
+ */
 public class ChatCompletionSyncResponseDTO {
 
     private List<Choice> choices;

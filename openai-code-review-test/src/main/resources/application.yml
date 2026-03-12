@@ -1,3 +1,4 @@
+# Spring Boot 基础配置，当前默认激活 dev 环境。
 spring:
   application:
     name: openai-code-review-test-app

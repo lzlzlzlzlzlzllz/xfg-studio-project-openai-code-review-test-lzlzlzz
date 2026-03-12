@@ -7,8 +7,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * 微信 access_token 获取工具。
+ * 当前实现比较直接：实时请求微信接口，然后把响应反序列化出来。
+ */
 public class WXAccessTokenUtils {
 
+    // 学习提示：这里保留了默认 APPID/SECRET，适合演示，不适合真实项目。
+    // 正式环境更推荐完全通过外部配置注入，并配合缓存 access_token。
     private static final String APPID = "wx5a228ff69e28a91f";
     private static final String SECRET = "0bea03aa1310bac050aae79dd8703928";
     private static final String GRANT_TYPE = "client_credential";
@@ -20,6 +26,7 @@ public class WXAccessTokenUtils {
 
     public static String getAccessToken(String APPID, String SECRET) {
         try {
+            // 按微信接口要求拼出 token 获取地址。
             String urlString = String.format(URL_TEMPLATE, GRANT_TYPE, APPID, SECRET);
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -29,6 +36,8 @@ public class WXAccessTokenUtils {
             System.out.println("Response Code: " + responseCode);
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
+                // 读取微信返回的 JSON，并解析出 access_token。
+                // 当前实现每次都实时请求微信，没有像 BearerTokenUtils 那样做本地缓存。
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
                 StringBuilder response = new StringBuilder();

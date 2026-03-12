@@ -1,5 +1,9 @@
 package plus.gaga.middleware.sdk.domain.model;
 
+/**
+ * 智谱模型枚举。
+ * 用枚举统一维护模型编码，避免在业务代码里散落硬编码字符串。
+ */
 public enum Model {
 
     @Deprecated

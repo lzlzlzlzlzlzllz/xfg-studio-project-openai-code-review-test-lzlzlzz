@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  演示/测试模块 POM：
+  主要用于配合 SDK 做示例测试，不是项目真正的业务系统。
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -13,6 +17,7 @@
 
     <packaging>jar</packaging>
 
+    <!-- 这里大多是 Spring Boot 测试依赖，真正关键的是对 SDK 模块的引用 -->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -93,6 +98,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <!-- 这里保留了历史主类路径，和当前源码类名并不一致 -->
+                    <!-- 学习提示：这说明测试模块更像演示骨架，而不是一个经过完整校验的可发布模块 -->
                     <mainClass>cn.bugstack.Application</mainClass>
                     <layout>JAR</layout>
                 </configuration>

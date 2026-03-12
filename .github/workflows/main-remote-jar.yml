@@ -1,6 +1,7 @@
 name: Build and Run OpenAiCodeReview By Main Remote Jar
 
 on:
+  # 远程 JAR 方案：不本地编译，直接下载发布好的版本来跑
   push:
     branches:
       - master-close
@@ -28,6 +29,7 @@ jobs:
         run: mkdir -p ./libs
 
       - name: Download openai-code-review-sdk JAR
+        # 下载已经发布到 GitHub Releases 的 SDK JAR
         run: wget -O ./libs/openai-code-review-sdk-1.0.jar https://github.com/fuzhengwei/openai-code-review-log/releases/download/v1.0/openai-code-review-sdk-1.0.jar
 
       - name: Get repository name
@@ -54,6 +56,7 @@ jobs:
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
 
       - name: Run Code Review
+        # 直接运行下载好的远程构建产物
         run: java -jar ./libs/openai-code-review-sdk-1.0.jar
         env:
           # Github 配置；GITHUB_REVIEW_LOG_URI「https://github.com/xfg-studio-project/openai-code-review-log」、GITHUB_TOKEN「https://github.com/settings/tokens」

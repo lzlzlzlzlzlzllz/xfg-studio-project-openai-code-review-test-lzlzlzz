@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 智谱 Bearer Token 生成工具。
+ * 由于 token 可以复用一段时间，这里顺手做了一层本地缓存。
+ */
 public class BearerTokenUtils {
 
     // 过期时间；默认30分钟
@@ -22,6 +26,7 @@ public class BearerTokenUtils {
             .build();
 
     public static String getToken(String apiKeySecret) {
+        // 平台给出的密钥格式是 apiKey.apiSecret，因此先按 "." 切分。
         String[] split = apiKeySecret.split("\\.");
         return getToken(split[0], split[1]);
     }
@@ -37,7 +42,7 @@ public class BearerTokenUtils {
         // 缓存Token
         String token = cache.getIfPresent(apiKey);
         if (null != token) return token;
-        // 创建Token
+        // 创建 JWT token，作为调用智谱接口时的 Bearer 令牌。
         Algorithm algorithm = Algorithm.HMAC256(apiSecret.getBytes(StandardCharsets.UTF_8));
         Map<String, Object> payload = new HashMap<>();
         payload.put("api_key", apiKey);
@@ -47,6 +52,7 @@ public class BearerTokenUtils {
         headerClaims.put("alg", "HS256");
         headerClaims.put("sign_type", "SIGN");
         token = JWT.create().withPayload(payload).withHeader(headerClaims).sign(algorithm);
+        // 放入缓存，避免在短时间内重复签发 token。
         cache.put(apiKey, token);
         return token;
     }

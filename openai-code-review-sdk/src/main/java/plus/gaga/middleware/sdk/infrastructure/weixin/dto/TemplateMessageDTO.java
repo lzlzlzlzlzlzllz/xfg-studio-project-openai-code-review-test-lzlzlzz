@@ -3,6 +3,10 @@ package plus.gaga.middleware.sdk.infrastructure.weixin.dto;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 微信模板消息 DTO。
+ * data 的结构比较特殊，需要形如 { key: { value: "xxx" } }。
+ */
 public class TemplateMessageDTO {
 
     private String touser = "or0Ab6ivwmypESVp_bYuk92T6SvU";
@@ -16,6 +20,7 @@ public class TemplateMessageDTO {
     }
 
     public void put(String key, String value) {
+        // 单个模板字段的最内层结构固定为 { "value": xxx }。
         data.put(key, new HashMap<String, String>() {
             private static final long serialVersionUID = 7092338402387318563L;
 
@@ -26,6 +31,7 @@ public class TemplateMessageDTO {
     }
 
     public static void put(Map<String, Map<String, String>> data, TemplateKey key, String value){
+        // 静态工具方法，方便业务层直接向外部 data 容器填充模板字段。
         data.put(key.getCode(), new HashMap<String, String>() {
             private static final long serialVersionUID = 7092338402387318563L;
 

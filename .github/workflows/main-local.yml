@@ -1,6 +1,7 @@
 name: Run Java Git Diff By Local
 
 on:
+  # 这个工作流更像是作者调试用的本地编译方案示例
   push:
     branches:
       - master-close
@@ -25,6 +26,8 @@ jobs:
           java-version: '11'
 
       - name: Run Java code
+        # 直接 javac/java 运行源码，适合演示，不适合依赖复杂的正式项目
+        # 学习提示：这个流程没有处理完整依赖，因此更像“原理展示”而不是稳定部署方案
         run: |
           cd openai-code-review-sdk/src/main/java
           javac plus/gaga/middleware/sdk/OpenAiCodeReview.java

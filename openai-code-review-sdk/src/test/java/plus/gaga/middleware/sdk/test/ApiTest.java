@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * SDK 阶段的接口联调测试类。
+ * 这里更多是作者在开发时验证智谱和微信接口是否可用的脚本式代码。
+ */
 public class ApiTest {
 
     public static void main(String[] args) {
@@ -29,6 +33,7 @@ public class ApiTest {
         String apiKeySecret = "c78fbacd3e10118ad5649d7a54a3a163.UunYDBxpzeClvSKZ";
         String token = BearerTokenUtils.getToken(apiKeySecret);
 
+        // 直接手写 HTTP 请求，验证大模型接口能否拿到预期返回。
         URL url = new URL("https://open.bigmodel.cn/api/paas/v4/chat/completions");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -40,6 +45,7 @@ public class ApiTest {
 
         String code = "1+1";
 
+        // 这里没有复用正式 DTO，而是直接拼 JSON 字符串，属于临时验证写法。
         String jsonInpuString = "{"
                 + "\"model\":\"glm-4-flash\","
                 + "\"messages\": ["
@@ -77,6 +83,7 @@ public class ApiTest {
 
     @Test
     public void test_wx() {
+        // 验证微信公众号模板消息发送链路是否通畅。
         String accessToken = WXAccessTokenUtils.getAccessToken();
         System.out.println(accessToken);
 
@@ -111,6 +118,9 @@ public class ApiTest {
         }
     }
 
+    /**
+     * 仅用于测试场景下构建微信模板消息体。
+     */
     public static class Message {
         private String touser = "or0Ab6ivwmypESVp_bYuk92T6SvU";
         private String template_id = "mKhGjV7UAV7Se9_byoPrgRlNfgJac8ZAfLnK8hyGmTQ";

@@ -1,35 +1,41 @@
 name: Build and Run OpenAiCodeReview By Main Maven Jar
 
 on:
+  # 这个版本走完整 Maven 构建链路
   push:
     branches:
       - master
   pull_request:
     branches:
-      - master
+      - master #当向master分支 push时触发 当向master分支PR时
 
-jobs:
+jobs: #定义一个CI任务 把每个job就相当于一台最新开的虚拟机就行。
   build:
     runs-on: ubuntu-latest
-
+    # 检出代码，可以理解为把当前代码仓库拉到这台“虚拟机”上
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          fetch-depth: 2
+          fetch-depth: 2 #只拉最近的2个提交
 
+   #安装JDK
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
 
+     # 用maven构建项目
       - name: Build with Maven
+        # 先把整个多模块工程编译并安装到本地仓库
         run: mvn clean install
 
       - name: Copy openai-code-review-sdk JAR
+        # 从本地 Maven 仓库取出 SDK 产物，放到 libs 目录方便直接运行
         run: mvn dependency:copy -Dartifact=plus.gaga.middleware:openai-code-review-sdk:1.0 -DoutputDirectory=./libs
 
+     # 从GitHib环境变量里抽取信息
       - name: Get repository name
         id: repo-name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
@@ -46,6 +52,7 @@ jobs:
         id: commit-message
         run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
+     # 打印这些信息 （方便调试）
       - name: Print repository, branch name, commit author, and commit message
         run: |
           echo "Repository name is ${{ env.REPO_NAME }}"
@@ -54,6 +61,7 @@ jobs:
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
 
       - name: Run Code Review
+        # 运行本次构建出来的 SDK JAR
         run: java -jar ./libs/openai-code-review-sdk-1.0.jar
         env:
           # Github 配置；GITHUB_REVIEW_LOG_URI「https://github.com/xfg-studio-project/openai-code-review-log」、GITHUB_TOKEN「https://github.com/settings/tokens」

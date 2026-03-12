@@ -1,5 +1,6 @@
 
 <!-- 日志级别从低到高分为TRACE < DEBUG < INFO < WARN < ERROR < FATAL，如果设置为WARN，则低于WARN的信息都不会输出 -->
+<!-- 这是测试模块的日志配置，包含控制台、文件和异步输出三类 appender -->
 <configuration scan="true" scanPeriod="10 seconds">
 
     <contextName>logback</contextName>
@@ -12,7 +13,7 @@
     <conversionRule conversionWord="wEx"
                     converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
 
-    <!-- 输出到控制台 -->
+    <!-- 输出到控制台，开发时最直观 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!-- 此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息 -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -24,8 +25,8 @@
         </encoder>
     </appender>
 
-    <!--输出到文件-->
-    <!-- 时间滚动输出 level为 INFO 日志 -->
+    <!-- 输出到文件 -->
+    <!-- INFO 日志按时间和大小滚动写入文件 -->
     <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文件的路径及文件名 -->
         <file>./data/log/log_info.log</file>
@@ -47,7 +48,7 @@
         </rollingPolicy>
     </appender>
 
-    <!-- 时间滚动输出 level为 ERROR 日志 -->
+    <!-- WARN/ERROR 级别日志单独沉淀到错误日志文件 -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文件的路径及文件名 -->
         <file>./data/log/log_error.log</file>
@@ -72,7 +73,7 @@
         </filter>
     </appender>
 
-    <!-- 异步输出 -->
+    <!-- 异步 INFO 输出，降低主线程记录日志时的阻塞感 -->
     <appender name="ASYNC_FILE_INFO" class="ch.qos.logback.classic.AsyncAppender">
         <!-- 队列剩余容量小于discardingThreshold,则会丢弃TRACT、DEBUG、INFO级别的日志;默认值-1,为queueSize的20%;0不丢失日志 -->
         <discardingThreshold>0</discardingThreshold>
@@ -97,11 +98,13 @@
         <appender-ref ref="ERROR_FILE"/>
     </appender>
 
-    <!-- 开发环境：控制台打印 -->
+    <!-- 开发环境单独对指定包打开更详细的日志级别 -->
     <springProfile name="dev">
         <logger name="com.nmys.view" level="debug"/>
     </springProfile>
 
+    <!-- 这个自定义 appender 依赖外部类，当前仓库里并没有对应实现 -->
+    <!-- 学习提示：如果你真的启动这个测试模块，这里很可能是首先要处理的兼容问题之一 -->
     <appender name="CUSTOM" class="plus.gaga.monitor.sdk.appender.CustomAppender">
         <systemName>big-market</systemName>
         <groupId>cn.bugstack</groupId>
@@ -109,6 +112,7 @@
         <port>16379</port>
     </appender>
 
+    <!-- root logger 会把日志分发到上面几个 appender -->
     <root level="info">
         <appender-ref ref="CUSTOM"/>
 

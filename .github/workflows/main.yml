@@ -1,9 +1,11 @@
 name: OpenAiCodeReview
 
 on:
+  # 所有分支 push 时都触发自动评审
   push:
     branches:
       - '*'
+  # PR 也触发，便于在合并前给出评审建议
   pull_request:
     branches:
       - '*'
@@ -16,6 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
+          # 至少拉两个提交，后面才能比较“最近一次提交”和“它的前一个提交”
           fetch-depth: 2  # 检出最后两个提交，以便可以比较 HEAD~1 和 HEAD
 
       - name: Set up JDK 11
@@ -28,6 +31,7 @@ jobs:
         run: mkdir -p ./libs
 
       - name: Download openai-code-review-sdk JAR
+        # 直接下载发布好的 SDK JAR，避免每次工作流都重新打包
         run: wget -O ./libs/openai-code-review-sdk-1.1.jar https://github.com/xfg-studio-project/openai-code-review-log/releases/download/v1.1/openai-code-review-sdk-1.1.jar
 
       - name: Get repository name
@@ -54,6 +58,7 @@ jobs:
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"
 
       - name: Run Code Review
+        # SDK 会在运行过程中自动完成：取 diff -> AI 评审 -> 提交日志 -> 微信通知
         run: java -jar ./libs/openai-code-review-sdk-1.1.jar
         env:
           # Github 配置；GITHUB_REVIEW_LOG_URI「https://github.com/xfg-studio-project/openai-code-review-log」、GITHUB_TOKEN「https://github.com/settings/tokens」

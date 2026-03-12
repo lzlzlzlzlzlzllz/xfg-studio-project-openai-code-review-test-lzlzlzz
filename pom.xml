@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  父工程 POM：
+  1. 统一管理项目坐标、Java 版本和公共依赖版本
+  2. 聚合 SDK 模块与测试模块
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -9,17 +14,20 @@
     <version>1.0</version>
     <packaging>pom</packaging>
 
+    <!-- 多模块工程入口，两个子模块都会跟着父工程一起构建 -->
     <modules>
         <module>openai-code-review-sdk</module>
         <module>openai-code-review-test</module>
     </modules>
 
+    <!-- 全局基础属性 -->
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- 复用 Spring Boot 默认依赖管理和插件配置 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -27,6 +35,7 @@
         <relativePath/>
     </parent>
 
+    <!-- 统一管理常见依赖版本，子模块引用时可以省略 version -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -58,6 +67,7 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- 统一资源目录和基础插件配置 -->
     <build>
         <resources>
             <resource>
